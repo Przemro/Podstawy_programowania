@@ -1,4 +1,5 @@
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 
@@ -20,7 +21,7 @@ int main()
 
         for (int j = 0; j < n; j++)
         {
-            if ((a/n + 0.5 == tab[j])||(a/n - 0.5 == tab[j]))
+            if ((ceil(a/n) == tab[j])||(floor(a/n) == tab[j]))
             {
                 cout << tab[j] << endl;
                 break;
