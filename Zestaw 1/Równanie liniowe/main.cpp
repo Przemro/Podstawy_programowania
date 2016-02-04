@@ -3,7 +3,7 @@
 
 using namespace std;
 
-double zaokraglij(double n)
+float zaokraglij(float n)
 {
   int y = n * 10000; // przesuwamy przecinek o 4 miejsca i pozbywamy sie reszty za przecinkiem - y jest calkowite
   if (y % 100 >= 5)
@@ -15,7 +15,7 @@ double zaokraglij(double n)
 
 int main()
 {
-    float a, b, c, x, y;
+    float a, b, c, x;
 
     cin >> a;   // Wczytaj a
     cin >> b;   // Wczytaj b
