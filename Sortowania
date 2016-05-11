@@ -1,0 +1,206 @@
+#include <iostream>
+#include <cstdlib>
+#include <time.h>
+#include <cstdio>
+
+using namespace std;
+
+void gen(int tab[], int size)	// losowe generowanie liczb do tablei
+{
+	for(int i = 0 ; i < size ; i++)
+	{
+	  	tab [i] = rand() % 100 + 1;
+	}
+}
+void print(int tab[], int size) // wypisanie lub debug
+{
+	for(int i = 0 ; i < size ; i++)
+	{
+		cout << tab [i] << " ";
+	}
+}
+void sort_select(int tab[], int size)	// sortowanie przez selekcje
+{
+	int temp;
+	for (int i = 0; i < size-1; i++)
+	{
+		temp = i;
+		for (int j = i + 1; j < size; j++)
+		{
+			if (tab[j] < tab[temp])
+			{
+				temp = j;
+			}
+		}
+		swap(tab[i],tab[temp]);
+	}
+}
+void merge(int tab[], int p, int temp, int size)
+{
+	int * ntab = new int[size + 1];
+	int h = p, i = 0, j = temp + 1;
+
+	while((h <= temp)&&(j <= size))
+	{
+		if(tab[h] <= tab[j])
+		{
+			ntab[i] = tab[h];
+			h++;
+		}
+		else
+		{
+			ntab[i] = tab[j];
+			j++;
+		}
+		i++;
+	}
+
+	if(h > temp)
+	{
+		for (int k = j ;k <= size; k++)
+		{
+			ntab[i] = tab[k];
+			i++;
+		}
+	}
+	else
+	{
+		for (int k = h ; k <= temp ; k++)
+		{
+			ntab[i] = tab[k];
+			i++;
+		}
+	}
+
+	for (int k = 0 ; k <= size - p ; k++)
+	{
+		tab[k + p] = ntab[k];
+	}
+	delete[] ntab;
+}
+void sort_merge( int tab[], int p, int size )	// sortowanie przez laczenie
+{
+	int temp;
+	if( p < size )
+	{
+		temp = ( p + size ) / 2;
+		sort_merge( tab, p, temp );
+		sort_merge( tab, temp + 1, size );
+		merge( tab, p, temp, size );
+	}
+}
+void quick_sort(int tab[], int l, int size) //sortowanie szybkie
+{
+	if(size <= l) return;
+
+	int i = l - 1, j = size + 1,
+	mid = tab[(l + size) / 2]; //wybieramy punkt odniesienia s=srodkowa liczba
+
+	while(1)
+	{
+	while(mid > tab[++i]);	//szukam elementu wiekszego lub rownego od œrodkowego po prawej
+
+	while(mid < tab[--j]);	//szukam elementu wiekszego lub rownego od œrodkowego po lewej
+
+	if( i <= j)
+		{
+		swap(tab[i],tab[j]);
+		}
+	else
+		{
+		break;
+		}
+	}
+
+	if(j > l)
+	{
+		quick_sort(tab, l, j);
+	}
+	if(i < size)
+	{
+		quick_sort(tab, i, size);
+	}
+}
+void heapify (int tab[], int hsize, int a)  //układanie kopca/naprawianie
+{
+    int max;
+    int l = 2 * a, r = (2 * a) + 1;
+    if (l <= hsize && tab[l] > tab[a])
+        {
+            max = l;
+        }
+    else
+        {
+            max = a;
+        }
+    if (r <= hsize && tab[r] > tab[max])
+    {
+    max = r;
+    }
+    if (max != a)
+    {
+        swap(tab[max], tab[a]);
+        heapify(tab, hsize, max);
+    }
+}
+void heap_build(int tab[], int size)    //budowanie kopca
+{
+    for (int i = size / 2; i > 0; i--)
+    {
+        heapify(tab, size, i);
+    }
+}
+void heap_sort(int tab[], int size) //sortowanie przez kopcowanie
+{
+    heap_build(tab, size);
+
+    for (int i = size; i > 1; i--)
+    {
+        swap(tab[i], tab[1]);
+        heapify(tab, i-1, 1);
+    }
+}
+
+int main()
+{
+	int size;
+	cout << "Ile liczb chcesz posortowac? ";
+	cin >> size;
+
+	int *tab = new int [size];
+
+	//Debug
+	/*
+	cout<<endl;
+	print(tab,size);
+	cout<<endl;
+	*/
+
+	gen(tab,size);
+	clock_t t1 = clock(); //stoper start
+	sort_select(tab,size);
+	printf("Czas sort_select to: %lu ms/n", clock() - t1 ); //stoper stop i czas
+	cout<<endl;
+
+	gen(tab,size);
+	clock_t t2 = clock();	//stoper start
+	sort_merge(tab, 0, size-1);
+	printf("Czas sort_merge to: %lu ms/n", clock() - t2 );	//stoper stop i czas
+	cout<<endl;
+
+	gen(tab,size);
+	clock_t t3 = clock();	//stoper start
+	quick_sort(tab, 0, size-1);
+	printf("Czas quick_sort to: %lu ms/n", clock() - t3 );	//stoper stop i czas
+	cout<<endl;
+
+	gen(tab,size);
+	clock_t t4 = clock();	//stoper start
+	heap_sort(tab, size);
+	printf("Czas heap_sort to: %lu ms/n", clock() - t4 );	//stoper stop i czas
+	cout<<endl;
+
+	delete[] tab;
+	system("pause");
+	return 0;
+}
